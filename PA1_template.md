@@ -5,16 +5,15 @@ date: "7/28/2017"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 ## Loading and preprocessing the data
 
 Here, we load in our activity data and plot a histogram of the total number
 of steps per day:
 
-```{r}
+
+```r
 unzip("activity.zip")
 totalActivity <- read.csv("activity.csv")
 activity <- totalActivity[complete.cases(totalActivity),]
@@ -22,22 +21,24 @@ agg <- aggregate(steps ~ date, activity, sum)
 hist(agg$steps)
 ```
 
-```{r, echo=FALSE, results='hide'}
-dev.off()
-```
+![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
+
+
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+
+```r
 actMean <- mean(agg$steps)
 actMedian <- median(agg$steps)
 ```
 
-The mean number of steps per day is **`r format(actMean, digits = 2)`** and the median is **`r format(actMedian, digits = 2)`**.
+The mean number of steps per day is **10766** and the median is **10765**.
 
 ## What is the average daily activity pattern?
 
-```{r}
+
+```r
 avgPerInt <- aggregate(steps ~ interval, activity, mean)
 plot(avgPerInt, type = 'n', main = 'Mean steps per 5 min interval')
 lines(avgPerInt)
@@ -45,12 +46,15 @@ maxSteps <- max(avgPerInt$steps)
 abline(h = maxSteps, col = 'blue')
 ```
 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+
 The max number of steps recorded per 5 min time interval during the time period
-is **`r format(maxSteps, digits = 2)`**.
+is **206**.
 
 ## Imputing missing values
 
-```{r}
+
+```r
 hasMissing <- totalActivity[!complete.cases(totalActivity),]
 numMissing <- nrow(hasMissing)
 numStepsMiss <- sum(is.na(hasMissing$steps))
@@ -58,16 +62,17 @@ numDateMiss <- sum(is.na(hasMissing$date))
 numIntervalMiss <- sum(is.na(hasMissing$interval))
 ```
 
-There are a total of **`r numMissing`** records with missing values.
-Of those records, **`r numStepsMiss`** had steps missing,
-**`r numDateMiss`** were missing dates, and
-**`r numIntervalMiss`** were missing intervals.
+There are a total of **2304** records with missing values.
+Of those records, **2304** had steps missing,
+**0** were missing dates, and
+**0** were missing intervals.
 
 Now previously, we filtered out missing data.  We're going to load the data
 again, but this time, any missing step data will be filled in with the
 average number of steps for that 5 minute time chunk.
 
-```{r}
+
+```r
 filledMissing <- data.frame(totalActivity)
 for (i in 1:nrow(filledMissing)) {
     if (is.na(filledMissing[i,]$steps)) {
@@ -79,22 +84,26 @@ for (i in 1:nrow(filledMissing)) {
 
 Here's a histogram of the data with missing data filled in:
 
-```{r}
+
+```r
 aggFilled <- aggregate(steps ~ date, filledMissing, sum)
 hist(aggFilled$steps)
 ```
 
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
+
 We'll also compare the mean and median with the missing data filled in:
 
-```{r}
+
+```r
 actMeanFilled <- mean(aggFilled$steps)
 actMedianFilled <- median(aggFilled$steps)
 ```
 
-The mean number of steps per day is **`r format(actMeanFilled, digits = 2)`** and the median is **`r format(actMedianFilled, digits = 2)`**.
+The mean number of steps per day is **10766** and the median is **10766**.
 
-Previously, it was **`r format(actMean, digits = 2)`** and
-**`r format(actMedian, digits = 2)`**, so it did not really change.
+Previously, it was **10766** and
+**10765**, so it did not really change.
 
 The difference between including estimates for the missing data and not seems to be it further concentrates the distribution around the mean, but doesn't change it.
 
@@ -103,7 +112,8 @@ The difference between including estimates for the missing data and not seems to
 Let's examine how the average number of steps per 5 minute time interval
 across weekends and weekdays.  How do they compare?
 
-```{r}
+
+```r
 isWeekend <- function(days) {
     output <- c()
     for (x in days) {
@@ -124,5 +134,7 @@ xyplot(intAggFilled$steps ~ intAggFilled$interval | intAggFilled$weekend,
        type = "l",
        layout = c(1,2))
 ```
+
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
 
 

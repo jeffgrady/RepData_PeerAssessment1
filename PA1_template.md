@@ -1,5 +1,5 @@
 ---
-title: "Reproducible Research Project 1"
+title: "Reproducible Research Project 1: Step Data"
 author: "Jeff Grady"
 date: "7/28/2017"
 output: html_document
@@ -7,10 +7,15 @@ output: html_document
 
 
 
+# Step Data
+
+In this class project, we'll examine step data collected from activity
+monitoring devices.
+
 ## Loading and preprocessing the data
 
-Here, we load in our activity data and plot a histogram of the total number
-of steps per day:
+Here, we load in our activity data, calculate the total number of steps per
+day, and plot a histogram of the distribution of total number of steps per day:
 
 
 ```r
@@ -22,8 +27,6 @@ hist(agg$steps)
 ```
 
 ![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
-
-
 
 ## What is mean total number of steps taken per day?
 
@@ -37,6 +40,9 @@ The mean number of steps per day is **10766** and the median is **10765**.
 
 ## What is the average daily activity pattern?
 
+Here, we calculate the mean number of steps per 5 minute interval across
+all days.  The horizontal line represents the peak average steps per interval.
+
 
 ```r
 avgPerInt <- aggregate(steps ~ interval, activity, mean)
@@ -46,7 +52,7 @@ maxSteps <- max(avgPerInt$steps)
 abline(h = maxSteps, col = 'blue')
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
 
 The max number of steps recorded per 5 min time interval during the time period
 is **206**.
@@ -82,7 +88,8 @@ for (i in 1:nrow(filledMissing)) {
 }
 ```
 
-Here's a histogram of the data with missing data filled in:
+Here's a histogram of the distribution of the total number of steps per day,
+but with missing the data filled in:
 
 
 ```r
@@ -90,7 +97,7 @@ aggFilled <- aggregate(steps ~ date, filledMissing, sum)
 hist(aggFilled$steps)
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
 
 We'll also compare the mean and median with the missing data filled in:
 
@@ -105,7 +112,7 @@ The mean number of steps per day is **10766** and the median is **10766**.
 Previously, it was **10766** and
 **10765**, so it did not really change.
 
-The difference between including estimates for the missing data and not seems to be it further concentrates the distribution around the mean, but doesn't change it.
+The difference between including estimates for the missing data and not seems to be it further concentrates the distribution around the mean, but doesn't change it, as we would expect.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -135,6 +142,18 @@ xyplot(intAggFilled$steps ~ intAggFilled$interval | intAggFilled$weekend,
        layout = c(1,2))
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
 
+We can see that there were perhaps fewer peak steps taken per 5 minute
+interval on the weekend, but the steps were distributed more evenly.  The
+weekday pattern makes sense in the context of, peoople usually take lots
+of steps commuting to work and then are more sedentary throughout the day.
 
+## Generating this report
+
+To generate this report in the R console, do the following:
+
+```
+> library(knitr)
+> knit2html("PA1_template.Rmd", "PA1_template.html", force_v1 = T)
+```

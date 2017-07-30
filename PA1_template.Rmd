@@ -1,5 +1,5 @@
 ---
-title: "Reproducible Research Project 1"
+title: "Reproducible Research Project 1: Step Data"
 author: "Jeff Grady"
 date: "7/28/2017"
 output: html_document
@@ -9,10 +9,15 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Step Data
+
+In this class project, we'll examine step data collected from activity
+monitoring devices.
+
 ## Loading and preprocessing the data
 
-Here, we load in our activity data and plot a histogram of the total number
-of steps per day:
+Here, we load in our activity data, calculate the total number of steps per
+day, and plot a histogram of the distribution of total number of steps per day:
 
 ```{r}
 unzip("activity.zip")
@@ -20,10 +25,6 @@ totalActivity <- read.csv("activity.csv")
 activity <- totalActivity[complete.cases(totalActivity),]
 agg <- aggregate(steps ~ date, activity, sum)
 hist(agg$steps)
-```
-
-```{r, echo=FALSE, results='hide'}
-dev.off()
 ```
 
 ## What is mean total number of steps taken per day?
@@ -36,6 +37,9 @@ actMedian <- median(agg$steps)
 The mean number of steps per day is **`r format(actMean, digits = 2)`** and the median is **`r format(actMedian, digits = 2)`**.
 
 ## What is the average daily activity pattern?
+
+Here, we calculate the mean number of steps per 5 minute interval across
+all days.  The horizontal line represents the peak average steps per interval.
 
 ```{r}
 avgPerInt <- aggregate(steps ~ interval, activity, mean)
@@ -77,7 +81,8 @@ for (i in 1:nrow(filledMissing)) {
 }
 ```
 
-Here's a histogram of the data with missing data filled in:
+Here's a histogram of the distribution of the total number of steps per day,
+but with missing the data filled in:
 
 ```{r}
 aggFilled <- aggregate(steps ~ date, filledMissing, sum)
@@ -96,7 +101,7 @@ The mean number of steps per day is **`r format(actMeanFilled, digits = 2)`** an
 Previously, it was **`r format(actMean, digits = 2)`** and
 **`r format(actMedian, digits = 2)`**, so it did not really change.
 
-The difference between including estimates for the missing data and not seems to be it further concentrates the distribution around the mean, but doesn't change it.
+The difference between including estimates for the missing data and not seems to be it further concentrates the distribution around the mean, but doesn't change it, as we would expect.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -125,4 +130,16 @@ xyplot(intAggFilled$steps ~ intAggFilled$interval | intAggFilled$weekend,
        layout = c(1,2))
 ```
 
+We can see that there were perhaps fewer peak steps taken per 5 minute
+interval on the weekend, but the steps were distributed more evenly.  The
+weekday pattern makes sense in the context of, peoople usually take lots
+of steps commuting to work and then are more sedentary throughout the day.
 
+## Generating this report
+
+To generate this report in the R console, do the following:
+
+```
+> library(knitr)
+> knit2html("PA1_template.Rmd", "PA1_template.html", force_v1 = T)
+```
